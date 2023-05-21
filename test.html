@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilan de conduite</title>
+    <script>
+        let listeExp = [];
+        let experiences = localStorage.getItem('listeExp');
+
+        if (experiences != null) {
+            listeExp = JSON.parse(experiences);
+        }
+
+        document.onreadystatechange = function () {
+            if (document.readyState === "complete") {
+                afficheListeExperience();
+                calculerDistanceTotale();
+            }
+        };
+
+        function afficheListeExperience() {
+            let listeExperience = localStorage.getItem('listeExp');
+            if (listeExperience !== null) {
+                listeExperience = JSON.parse(listeExperience);
+                let table = document.getElementById('tableau');
+                let tbody = table.getElementsByTagName('tbody')[0];
+                tbody.innerHTML = '';
+
+                listeExperience.forEach(function (experience) {
+                    let row = tbody.insertRow();
+                    let cellId = row.insertCell();
+                    let cellNom = row.insertCell();
+                    let cellPrenom = row.insertCell();
+                    let cellDate = row.insertCell();
+                    let cellMeteo = row.insertCell();
+                    let cellDistance = row.insertCell();
+
+                    cellId.innerHTML = experience.id;
+                    cellNom.innerHTML = experience.nom;
+                    cellPrenom.innerHTML = experience.prenom;
+                    cellDate.innerHTML = experience.dateconduite;
+                    cellMeteo.innerHTML = experience.meteo;
+                    cellDistance.innerHTML = experience.distance;
+                });
+            }
+        }
+
+        function calculerDistanceTotale() {
+            let listeExperience = localStorage.getItem('listeExp');
+            if (listeExperience !== null) {
+                listeExperience = JSON.parse(listeExperience);
+                let distanceTotale = 0;
+
+                listeExperience.forEach(function (experience) {
+                    distanceTotale += parseInt(experience.distance);
+                });
+
+                let paragraphe = document.createElement('p');
+                paragraphe.innerHTML = "Distance totale parcourue : " + distanceTotale;
+                document.body.appendChild(paragraphe);
+            }
+        }
+    </script>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            padding: 10px;
+        }
+        body {
+  padding: 0;
+  margin: 0;
+  background: white;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  padding: 20px;
+  background: linear-gradient(to right, black, grey);
+  color: #fff;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2.5em;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+form {
+  margin: 30px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+fieldset {
+  margin: 20px 0;
+  padding: 20px;
+  background: #f9f9f9;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+legend {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+label {
+  display: inline-block;
+  margin-bottom: 5px;
+  font-size: 1.1em;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+select {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+input[type="radio"] {
+  display: inline;
+  margin-right: 5px;
+  margin-bottom: 10px;
+}
+
+p {
+  font-weight: bold;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url("https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-arrow-down-b-512.png") no-repeat center right;
+  background-size: 20px;
+  padding-right: 30px;
+  cursor: pointer;
+}
+
+select:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+input:invalid {
+  background-color: ivory;
+  border: none;
+  outline: 2px solid red;
+  border-radius: 5px;
+}
+
+@media screen and (min-width: 800px) {
+  form {
+    box-sizing: border-box;
+    padding: 0.5em;
+    display: grid;
+    grid-gap: 0.5em;
+    grid-template-areas:
+      "perso perso perso"
+      "conduite conditions type";
+    grid-template-rows: max-content 2fr;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  form {
+    box-sizing: border-box;
+    padding: 0.5em;
+    display: grid;
+    grid-gap: 0.5em;
+    grid-template-areas:
+      "perso"
+      "conduite"
+      "conditions"
+      "type";
+    grid-template-rows: auto;
+  }
+}
+
+.info_perso {
+  grid-area: perso;
+  height: max-content;
+}
+    </style>
+</head>
+<body>
+    <h1>Récapitulatif des saisies</h1>
+    <section id="listeExperience">
+        <table id="tableau">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Date de conduite</th>
+                    <th>Météo</th>
+                    <th>Distance</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+    <a href="javascript:localStorage.removeItem('listeExp'); location.reload();">
+        <input type="submit" value="Effacer tout">
+    </a>
+</body>
+</html>
