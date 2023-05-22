@@ -4,194 +4,347 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bilan de conduite</title>
+    <title>experience de conduite</title>
     <script>
-        let listeExp = [];
-        let experiences = localStorage.getItem('listeExp');
+        let meteoData = [
+            {"idMeteo": "Ensoleillé", "meteo": "Soleil"},
+            {"idMeteo": "Pluvieux", "meteo": "Pluie"},
+            {"idMeteo": "Neigeux", "meteo": "Neige"},
+            {"idMeteo": "Venteux", "meteo": "Vent"}
+        ];
+        
+        let routeData = [
+            {"idRoute": "Départementale", "route": "départementale"},
+            {"idRoute": "Communale", "route": "communale"},
+            {"idRoute": "Nationale", "route": "nationale"},
+            {"idRoute": "Autoroute", "route": "autoroute"}
+        ];
+        
+        let vehiculeData = [
+            {"idVehicule":"1","annee":2022,"marque":"Toyota"},    
+            {"idVehicule":"2","annee":2018,"marque":"Peugeot"},    
+            {"idVehicule":"3","annee":2021,"marque":"Volkswagen"}
+        ];
+        
+        let incidentData = [
+            {"idIncident":"1","incident":"Pas d'incident"},    
+            {"idIncident":"2","incident":"Trottoir heurté"},    
+            {"idIncident":"3","incident":"Véhicule heurté"}
+        ];
 
-        if (experiences != null) {
-            listeExp = JSON.parse(experiences);
-        }
+        function saveExperience() {
+            let lenom = document.getElementById('nom').value;
+            let leprenom = document.getElementById('prenom').value;
+            let ladateconduite = document.getElementById('dateconduite').value;
+            let lheuredepart = document.getElementById('heuredep').value;
+            let lheurefin = document.getElementById('heurefin').value;
+            let ladistance = document.getElementById('distance').value;
 
-        document.onreadystatechange = function () {
-            if (document.readyState === "complete") {
-                afficheListeExperience();
-                calculerDistanceTotale();
+            let meteo = document.querySelector('input[name="meteo"]:checked').id;
+            let route = document.querySelector('input[name="route"]:checked').id;
+            let anneeVehicule = document.getElementById('annee').value;
+            let marque = document.getElementById('idVehicule').value;
+            let incident = document.getElementById('idIncident').value;
+
+            listeExperience = new Array();
+
+            experiences = localStorage.getItem('listeExp');
+            if (experiences !== null) {
+                listeExperience = JSON.parse(experiences);
             }
-        };
 
-        function afficheListeExperience() {
-            let listeExperience = localStorage.getItem('listeExp');
-            if (listeExperience !== null) {
-                listeExperience = JSON.parse(listeExperience);
-                let table = document.getElementById('tableau');
-                let tbody = table.getElementsByTagName('tbody')[0];
-                tbody.innerHTML = '';
+            let newExperience = {
+                "id": listeExperience.length + 1,
+                "nom": lenom,
+                "prenom": leprenom,
+                "dateconduite": ladateconduite,
+                "heuredepart": lheuredepart,
+                "heurefin": lheurefin,
+                "distance": ladistance,
+                "meteo": meteo,
+                "route": route,
+                "anneeVehicule": anneeVehicule,
+                "marque": marque,
+                "incident": incident
+            };
 
-                listeExperience.forEach(function (experience) {
-                    let row = tbody.insertRow();
-                    let cellId = row.insertCell();
-                    let cellNom = row.insertCell();
-                    let cellPrenom = row.insertCell();
-                    let cellDate = row.insertCell();
-                    let cellMeteo = row.insertCell();
-                    let cellDistance = row.insertCell();
-
-                    cellId.innerHTML = experience.id;
-                    cellNom.innerHTML = experience.nom;
-                    cellPrenom.innerHTML = experience.prenom;
-                    cellDate.innerHTML = experience.dateconduite;
-                    cellMeteo.innerHTML = experience.meteo;
-                    cellDistance.innerHTML = experience.distance;
-                });
-            }
-        }
-
-        function calculerDistanceTotale() {
-            let listeExperience = localStorage.getItem('listeExp');
-            if (listeExperience !== null) {
-                listeExperience = JSON.parse(listeExperience);
-                let distanceTotale = 0;
-
-                listeExperience.forEach(function (experience) {
-                    distanceTotale += parseInt(experience.distance);
-                });
-
-                let paragraphe = document.createElement('p');
-                paragraphe.innerHTML = "Distance totale parcourue : " + distanceTotale;
-                document.body.appendChild(paragraphe);
-            }
-        }
+            listeExperience.push(newExperience);
+            listeExpStr=JSON.stringify(listeExperience);
+            localStorage.setItem('listeExp', JSON.stringify(listeExperience));
+            document.getElementById('valider').reset();
+            alert('Les données ont été enregistrées avec succès.');
+        }  
     </script>
+    
     <style>
-      body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
+        body{
+            padding: 0;
+            margin: 0;
+            background: white;
+            font-family: Arial, sans-serif;
+        }
 
-h1 {
-  text-align: center;
-  padding: 20px;
-}
-div{
-  
-  width: max-content;
-  height: max-content;    
-  margin-top: 30px;
-  margin-left: auto;
-  margin-right: auto;
-  
-}
+        header{
+            padding: 20px;
+            background: linear-gradient(to right,black, grey);
+            color: #fff;
+            text-align: center;
+        }
 
-#tableau {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 30px;
-}
+        h1{
+            margin: 0;
+            font-size: 2.5em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
 
-#tableau th,
-#tableau td {
-  padding: 10px;
-  text-align: center;
-}
+        form{
+            margin: 30px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
 
-#tableau thead tr {
-  background-color: #333333;
-}
+        fieldset{
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
 
-#tableau thead th {
-  color: #ffffff;
-}
+        legend{
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-#tableau tbody tr:nth-child(even) {
-  background-color: #555555;
-}
+        label{
+            display: inline-block;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+            
+        }
 
-#tableau tbody tr:hover {
-  background-color: #777777;
-}
+        input[type="text"], input[type="number"], input[type="date"], input[type="time"], select{
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
 
-input[type="submit"] {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  background-color: #ffffff;
-  color: #000000;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-}
+        input[type="radio"]{
+            display: inline;
+            margin-right: 5px;
+            margin-bottom: 10px;
+        }
+        p{
+            font-weight: bold;
+        }
 
-input[type="submit"]:hover {
-  background-color: #eeeeee;
-}
+        select{
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background: url("https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-arrow-down-b-512.png") no-repeat center right;
+            background-size: 20px;
+            padding-right: 30px;
+            cursor: pointer;
+        }
 
+        select:focus{
+            outline: none;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
 
+        input:invalid{
+            background-color: ivory;
+            border: none;
+            outline: 2px solid red;
+            border-radius: 5px;     
+        }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+        @media screen and (min-width:800px) {
+            form{
+                box-sizing: border-box;
+                padding: 0.5em;
+                display: grid;
+                grid-gap: 0.5em;
+                grid-template-areas:
+                "perso perso perso"
+                "conduite conditions type";
+                grid-template-rows: max-content 2fr;
+                grid-template-columns: 1fr 1fr 1fr;
+                
+            }
+        }
+        @media screen and (max-width: 800px) {
+            form{
+                box-sizing: border-box;
+                padding: 0.5em;
+                display: grid;
+                grid-gap: 0.5em;
+                grid-template-areas:
+                "perso"
+                "conduite"
+                "conditions"
+                "type";
+                grid-template-rows: auto;
+            }
+        }
+            
+        .info_perso{
+            grid-area: perso;
+            height: max-content;
+        }
+        .info_conduite{
+            grid-area: conduite;
+        }
+        .conditions{
+            grid-area: conditions;
+        }
+        .type{
+            grid-area: type;
+        }
+        fieldset:not([class="info_conduite"]) {
+            height: 400px;
+        }
 
-p {
-  animation: fadeIn 1s ease-in-out;
-}
+        footer {
+        background-color: #f2f2f2;
+        padding: 20px;
+        text-align: center;
+        font-size: 14px;
+        color: #333;
+        border-top: 1px solid #ddd;
+        margin-top: 50px;
+        }
 
-.button {
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: bold;
-  text-transform: uppercase;
-  border-radius: 50px;
-  border: 2px solid #333;
-  color: #fff;
-  background: linear-gradient(to right, #000000, #ffffff);
-  transition: all 0.3s ease-in-out;
-  margin-left: 10px;
-  
-}
+        footer a {
+        color: #333;
+        text-decoration: none;
+        }
 
-.button:hover {
-  background: linear-gradient(to right, #ffffff, #000000);
-  border-color: #ffffff;
-  cursor: pointer;
-}
-h4{
+        footer a:hover {
+        text-decoration: underline;
+    }
+        button{
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 50px;
+            border: 2px solid #333;
+            color: #fff;
+            background: linear-gradient(to right, #333, #666);
+            transition: all 0.3s ease-in-out;
+        }
+
+        button:hover {
+        background: linear-gradient(to right, #666, #333);
+        border-color: #666;
+        cursor: pointer;
+        }
+        h4{
             text-align: center;
             font-family: 'Times New Roman', Times, serif;
         }
+        @media screen and (max-width: 800px) {
+            h4 a {
+            display: none;
+        }
+}
+
     </style>
-</head>
+
 <body>
-    <h1>Bilan</h1>
-    <section id="listeExperience">
-      <h4>Voici le récapitulatif de votre experience de conduite:</h4>
-        <table id="tableau">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Date de conduite</th>
-                    <th>Météo</th>
-                    <th>Distance</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </section>
-    <div class="btn">
-    <a href="javascript:localStorage.removeItem('listeExp'); location.reload();">
-        <span class="button">Effacer tout</span>
-    </a>
-    <a href="index.html">
-      <span class="button">saisir</span>
-    </a>
-  </div>
+    <header>
+        <h1>Conduite Accompagnée</h1>
+    </header>
+    <article>
+        <h4>Veuillez remplir ce formulaire:</h4>
+        <h4><a href="test.html">voir le Bilan</a></h4>
+        <form id="valider">
+            <div class="info_perso">
+                <fieldset class="info_conduite">
+                    <legend>Informations personnelles</legend>
+                    <p>Nom:<input type="text" id="nom" placeholder="Entrez votre Nom" required></p>
+                    <p>Prénom: <input type="text" id="prenom" placeholder="Entrez votre Prénom" required></p>
+                </fieldset>
+            </div>
+            
+            <div id="info_conduite">
+                <fieldset>
+                    <legend>Informations sur la conduite</legend>
+                    <p>Date de conduite:<input type="date" id="dateconduite"></p>
+                    <p>Heure de départ:<input type="time" id="heuredep" ></p>
+                    <p>Heure de fin:<input type="time" id="heurefin"></p>
+                    <p>Kilomètres parcourus: <input type="number" id="distance" placeholder="Entrez la distance parcourue" required>Km</p>
+                </fieldset>
+            </div>
+            
+            <div class="conditions">
+                <fieldset>
+                    <legend>Conditions externes</legend>
+                    <p>Meteo:</p>
+                    <input type="radio" name="meteo" id="Ensoleillé">
+                    <label for="Ensoleillé">Ensoleillé</label>
+                    <input type="radio" name="meteo" id="Pluvieux">
+                    <label for="Pluvieux">Pluvieux</label>
+                    <input type="radio" name="meteo" id="Neigeux">
+                    <label for="Neigeux">Neigeux</label>
+                    <input type="radio" name="meteo" id="Venteux">
+                    <label for="Venteux">Venteux</label>
+                    <p>Type de Route:</p>
+                    <input type="radio" name="route" id="Départementale">
+                    <label for="Départementale">Départementale</label>
+                    <input type="radio" name="route" id="Communale">
+                    <label for="Communale">Communale</label>
+                    <input type="radio" name="route" id="Nationale">
+                    <label for="Nationale">Nationale</label>
+                    <input type="radio" name="route" id="Autoroute">
+                    <label for="Autoroute">Autoroute</label>
+                </fieldset>
+            </div>
+
+            <div class="type">
+                <fieldset>
+                    <legend>Type de Vehicule</legend>
+                    <p>Année:<input type="number" placeholder="Entrez l'année du vehicule" id="annee"></p>
+                    <p>Marque de la voiture:
+                        <select name="marque" id="idVehicule">
+                            <option value="">--Choisissez--</option>
+                        </select>
+                    </p>
+                    <p>Incident durant la conduite:
+                        <select name="incident" id="idIncident" required>
+                            <option value="">--Choisissez--</option>
+                        </select>
+                    </p>
+                </fieldset>
+             </div>
+            
+            <script>
+                vehiculeData.forEach(function(item, index){
+                    lOption	=`<option value=${item.idVehicule}>${item.marque}</option>`;
+		            document.getElementById('idVehicule').insertAdjacentHTML('beforeend',lOption);
+		        });    
+                incidentData.forEach(function(item, index){
+                    lOption	=`<option value=${item.idIncident}>${item.incident}</option>`;
+		            document.getElementById('idIncident').insertAdjacentHTML('beforeend',lOption);
+		        });    
+            </script>	
+            <button type="button" onclick="saveExperience()">Enregistrer</button>          
+        </form>
+        
+    </article>
+    <footer>
+        <p>&copy; 2023 Assistant conduite. Tous droits réservés. Réalisé par <a href="mailto:manda.rasoloson@gmail.com">Rasoloson Manda</a>.</p>
+    </footer>
 </body>
 </html>
